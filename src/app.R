@@ -25,7 +25,7 @@ df <-  read_csv(path)
 count <- select(df, -wait_time_50, -wait_time_90) %>% drop_na()
 
 #data subsetting
-main <- clean %>%
+main <- df %>%
   filter(procedure != 'All Procedures', 
          hospital != 'All Facilities',
          health_authority != 'All Health Authorities')
@@ -33,7 +33,7 @@ count <- count %>%
   filter(procedure != 'All Procedures', 
          hospital != 'All Facilities',
          health_authority != 'All Health Authorities')
-all <-  clean %>% 
+all <-  df %>% 
   filter(procedure == 'All Procedures', 
          hospital == 'All Facilities',
          health_authority == 'All Health Authorities') 
