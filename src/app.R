@@ -1,17 +1,17 @@
 library(dash, pos = .Machine$integer.max)
 library(dashCoreComponents)
 library(dashBootstrapComponents)
-library(ggplot2)
-library(plotly)
-library(tidyverse)
+# library(ggplot2)
+# library(plotly)
+# library(tidyverse)
 library(readxl)
-library(hexbin)
-library(ggthemes)
-library(repr)
-library(lubridate)
-library(stringr)
-library(reshape2)
-library(gridExtra)
+# library(hexbin)
+# library(ggthemes)
+# library(repr)
+# library(lubridate)
+# library(stringr)
+# library(reshape2)
+# library(gridExtra)
 #library(path.package())???
 
 # Data cleaning and data wrangling
@@ -48,9 +48,10 @@ app <- dash_app()
 
 
 # Sidebar components
-title <-  htmlH1(
-    'BC Surgical Wait Time Dashboard',
-    style = list('color': 'var(--bs-primary)')
+title <-  div(list(
+  h1('BC Surgical Wait Time Dashboard')
+  #style = list('color': 'var(--bs-primary)')
+)
 )
 
 nav <- dbcNav(
