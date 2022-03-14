@@ -1,9 +1,11 @@
 library(dash, pos = .Machine$integer.max)
 library(plotly)
-library(ggplot2)
 library(dashHtmlComponents)
 library(dashCoreComponents)
 library(dashBootstrapComponents)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
 
 # Load data
 df <- read.csv('./data/processed/data.csv')
@@ -149,7 +151,14 @@ app |> add_callback(
 		state(id = 'region-select', 'options')
 	),
 	callback = function(n, regions) {
-		return(regions)
+		return(
+			unlist(
+				lapply(
+					regions,
+					function(x) { x$value }
+				)
+			)
+		)
 	}
 )
 
