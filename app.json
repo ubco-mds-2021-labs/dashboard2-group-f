@@ -1,0 +1,9 @@
+{
+  "name": "BC Surgical Wait Times Dashboard",
+  "description": "This dashboard displays charts generated from publicly available data on surgical wait times in BC.",
+  "keywords": [
+    "heroku",
+    "R deployment",
+    "Dash R"
+]
+}
