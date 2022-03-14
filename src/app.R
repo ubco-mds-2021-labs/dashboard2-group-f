@@ -1,9 +1,11 @@
 library(dash, pos = .Machine$integer.max)
 library(plotly)
-library(ggplot2)
 library(dashHtmlComponents)
 library(dashCoreComponents)
 library(dashBootstrapComponents)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
 
 # Load data
 df <- read.csv('./data/processed/data.csv')
@@ -140,6 +142,7 @@ app |> add_callback(
 	}
 )
 
+
 ## Settings
 app |> add_callback(
 	outputs = output(id = 'region-select', property = 'value'),
@@ -148,8 +151,133 @@ app |> add_callback(
 		state(id = 'region-select', 'options')
 	),
 	callback = function(n, regions) {
-		return(regions)
+		return(
+			unlist(
+				lapply(
+					regions,
+					function(x) { x$value }
+				)
+			)
+		)
 	}
+)
+
+## Plots for tab1
+app |> add_callback(
+    output('plot1', 'figure'),
+    list(input('region-select', 'value')),
+    function(xcol) {
+      main1<-main%>% filter(health_authority %in% xcol)
+      top20_pro_waiting<-main1 %>% 
+      group_by(procedure) %>% 
+      summarise(waitingsum = sum(waiting)) %>% 
+      arrange(desc(waitingsum))%>%
+      top_n(20)%>%
+      select(procedure)
+      main_top_procedure_waiting <- filter(main,procedure %in% top20_pro_waiting$procedure)|>
+		group_by(procedure,year) %>% 
+		summarise(waitingsum = sum(waiting))
+      plot1 <- ggplot(main_top_procedure_waiting, aes(x = reorder(procedure,waitingsum,FUN=sum), y=waitingsum, fill = year))+ 
+      geom_bar(stat = "identity", show.legend = c(size=FALSE))+
+      labs(y = "Total Waiting Cases", x = "Procedure", title = "Number of Waiting Cases for Different Procedure Groups")+
+      theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),plot.title = element_text(size=10))+
+      coord_flip()
+      ggplotly(plot1,width = 800)
+    }
+)
+
+app |> add_callback(
+    output('plot2', 'figure'),
+    list(input('region-select', 'value')),
+    function(xcol) {
+      main2<-main%>% filter(health_authority %in% xcol)
+      top20_pro_completed<-main2 %>% 
+      group_by(procedure) %>% 
+      summarise(completedsum = sum(completed)) %>% 
+      arrange(desc(completedsum))%>%
+      top_n(20)%>%
+      select(procedure)
+      main_top_procedure_completed <- filter(main,procedure %in% top20_pro_completed$procedure)|>
+		group_by(procedure,year) %>% 
+		summarise(completedsum = sum(completed))
+      plot2 <- ggplot(main_top_procedure_completed, aes(x = reorder(procedure,completedsum,FUN=sum), y=completedsum, fill = year))+ 
+              geom_bar(stat = "identity", show.legend = c(size=FALSE))+
+              labs(y = "Total Completed Cases", x = "Procedure", title = "Number of Completed Cases for Different Procedure Groups")+
+              theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),plot.title = element_text(size=10))+
+              coord_flip()
+      ggplotly(plot2,width = 800)
+    }
+)
+
+app |> add_callback(
+    output('plot3', 'figure'),
+    list(input('region-select', 'value')),
+    function(xcol) {
+      main3<-main%>% filter(health_authority %in% xcol)
+      top20_hos_waiting<-main3 %>% 
+      group_by(hospital) %>% 
+      summarise(waitingsum = sum(waiting)) %>% 
+      arrange(desc(waitingsum))%>%
+      top_n(20)%>%
+      select(hospital)
+      main_top_hospital_waiting<- filter(main,hospital %in% top20_hos_waiting$hospital)|>
+		group_by(hospital,year) %>% 
+		summarise(waitingsum = sum(waiting))
+      plot3 <- ggplot(main_top_hospital_waiting, aes(x = reorder(hospital,waitingsum,FUN=sum), y=waitingsum, fill = year))+ 
+              geom_bar(stat = "identity", show.legend = c(size=FALSE))+
+              labs(y = "Total Waiting Cases", x = "Hospital", title = "Number of Waiting Cases for Different Hospitals")+
+              theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),plot.title = element_text(size=10))+
+              coord_flip()
+      ggplotly(plot3,width = 800)
+    }
+)
+
+app |> add_callback(
+    output('plot4', 'figure'),
+    list(input('region-select', 'value')),
+    function(xcol) {
+      main_4<-main%>% filter(health_authority %in% xcol)
+      top20_hos_completed<-main_4 %>% 
+      group_by(hospital) %>% 
+      summarise(completedsum = sum(completed)) %>% 
+      arrange(desc(completedsum))%>%
+      top_n(20)%>%
+      select(hospital)
+      main_top_hospital_completed <- filter(main,hospital %in% top20_hos_completed$hospital)|>
+		group_by(hospital,year) %>% 
+		summarise(completedsum = sum(completed))
+      plot4 <- ggplot(main_top_hospital_completed, aes(x = reorder(hospital,completedsum,FUN=sum), y=completedsum, fill = year))+ 
+              geom_bar(stat = "identity", show.legend = c(size=FALSE))+
+              labs(y = "Total Completed Cases", x = "Hospital", title = "Number of Completed Cases for Different Hospitals")+
+              theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),plot.title = element_text(size=10))+
+              coord_flip()
+      ggplotly(plot4,width = 800)
+    }
+)
+
+app |> add_callback(
+    output('plot5', 'figure'),
+    list(input('region-select', 'value')),
+    function(xcol) {
+      all_line<-count%>% 
+      filter(health_authority %in% xcol) %>%
+      filter(procedure=='All Procedures',hospital=='All Facilities')%>%
+      group_by(Y_Q) %>% 
+      summarise(waiting = sum(waiting),completed=sum(completed))%>%
+      select(Y_Q, waiting, completed) %>%
+      gather(key = "variable", value = "value", -Y_Q)
+      p<-ggplot(all_line)+
+      aes(x = Y_Q,
+      y = value,
+      color = variable)+
+      geom_point(size = 1)+
+      geom_line(
+        aes(group = variable), size = 1)+
+        labs(x = "Year & Quarter", y = "Number of Cases", color = "")+ 
+        ggtitle("Total Number of Waiting & Completed Cases")+
+        theme(legend.position = "bottom",axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),text = element_text(size=10),plot.title = element_text(size=12))
+      ggplotly(p)
+    }
 )
 
 # Run app
