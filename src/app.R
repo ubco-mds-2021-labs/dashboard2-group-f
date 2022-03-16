@@ -412,4 +412,4 @@ app |> add_callback(
 )
 
 # Run app
-app$run_server(host = '0.0.0.0')
+app$run_server()
