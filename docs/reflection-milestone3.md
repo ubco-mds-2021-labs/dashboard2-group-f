@@ -1,0 +1,10 @@
+## Surgical Systems Visualization App -Group f 
+
+### Milestone 3 Reflections
+The group encountered some challenges developing our milestone 3  R dashboard.  Individually and collectively we have still been successful at making group decisions, distributing tasks, problem solving and brainstorming, all in a collegial and professional manner within a welcoming and creative work environment, however we struggled a bit meeting timelines.  This was partly related to some of the challenges with the R in Dash documentations and supports, partly due to some hardware challenges and partly a result of competing time demands. 
+
+The R version of our dashboard follows the same format as our python version. The information is currently organized across two tabs representing the case counts, both waiting and completed and the wait times in weeks. The data can be filtered by health authority for refined exploration.  Code was cleaned up and an information landing page was added. All of the features currently present are functional. Csv files have been added to speed up the app and will be fully utilized in the final dashboard.  We still need to connect the hashed out year slider and quarter radio buttons to the plots. We would also like to develop tools for selecting by hospitals and/or procedures.  These improvements will allow the user to explore the data on a more granular level. 
+
+Development and deployment of this app in R was less challenging from the planning perspective because we have already worked through the material once. It was more challenging from the coding and deployment perspective because Dash is obviously at a lower level of development for R than it is for python.  
+
+Feedback was as expected.   Adding a year slider and providing some background information were the two main items.  We have added an information landing page that would appropriately guide an administrator, however we will expand the information so that non-domain users can better understand all the information presented. 
