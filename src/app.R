@@ -12,6 +12,7 @@ df <- read.csv('./data/processed/data.csv')
 
 # Initialize variables
 health_regions <- unique(df$health_authority)[-1]
+df$year <- as.factor(df$year)
 
 dropdown_contents <- list()
 for (i in 1:length(health_regions)) {
@@ -180,7 +181,7 @@ app |> add_callback(
       plot1 <- ggplot(main_top_procedure_waiting, aes(x = reorder(procedure,waitingsum,FUN=sum), y=waitingsum, fill = year))+ 
       geom_bar(stat = "identity", show.legend = c(size=FALSE))+
       labs(y = "Total Waiting Cases", x = "Procedure", title = "Number of Waiting Cases for Different Procedure Groups")+
-      theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),plot.title = element_text(size=10))+
+      theme(text = element_text(size=10), axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1),plot.title = element_text(size=10), legend.position = "none")+
       coord_flip()
       ggplotly(plot1,width = 800)
     }
@@ -203,7 +204,7 @@ app |> add_callback(
       plot2 <- ggplot(main_top_procedure_completed, aes(x = reorder(procedure,completedsum,FUN=sum), y=completedsum, fill = year))+ 
               geom_bar(stat = "identity", show.legend = c(size=FALSE))+
               labs(y = "Total Completed Cases", x = "Procedure", title = "Number of Completed Cases for Different Procedure Groups")+
-              theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),plot.title = element_text(size=10))+
+              theme(text = element_text(size=10), axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1),plot.title = element_text(size=10))+
               coord_flip()
       ggplotly(plot2,width = 800)
     }
@@ -226,7 +227,7 @@ app |> add_callback(
       plot3 <- ggplot(main_top_hospital_waiting, aes(x = reorder(hospital,waitingsum,FUN=sum), y=waitingsum, fill = year))+ 
               geom_bar(stat = "identity", show.legend = c(size=FALSE))+
               labs(y = "Total Waiting Cases", x = "Hospital", title = "Number of Waiting Cases for Different Hospitals")+
-              theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),plot.title = element_text(size=10))+
+              theme(text = element_text(size=10), axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1),plot.title = element_text(size=10), legend.position = "none")+
               coord_flip()
       ggplotly(plot3,width = 800)
     }
@@ -249,7 +250,7 @@ app |> add_callback(
       plot4 <- ggplot(main_top_hospital_completed, aes(x = reorder(hospital,completedsum,FUN=sum), y=completedsum, fill = year))+ 
               geom_bar(stat = "identity", show.legend = c(size=FALSE))+
               labs(y = "Total Completed Cases", x = "Hospital", title = "Number of Completed Cases for Different Hospitals")+
-              theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),plot.title = element_text(size=10))+
+              theme(text = element_text(size=10), axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1),plot.title = element_text(size=10))+
               coord_flip()
       ggplotly(plot4,width = 800)
     }
@@ -275,8 +276,138 @@ app |> add_callback(
         aes(group = variable), size = 1)+
         labs(x = "Year & Quarter", y = "Number of Cases", color = "")+ 
         ggtitle("Total Number of Waiting & Completed Cases")+
-        theme(legend.position = "bottom",axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),text = element_text(size=10),plot.title = element_text(size=12))
+        theme(legend.position = "bottom",axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1),text = element_text(size=10),plot.title = element_text(size=12))
       ggplotly(p)
+    }
+)
+
+# ==================================================================================================
+# Plots for tab2
+# ==================================================================================================
+
+# Line plot
+app |> add_callback(
+    output('lineplot', 'figure'),
+    list(input('region-select', 'value')),
+    function(region){
+      subdata <- df |>
+      filter(health_authority %in% region) |>
+      filter(procedure=='All Procedures', hospital=='All Facilities') |>
+      group_by(Y_Q) |> 
+      summarise(wait_time_50 = mean(wait_time_50), wait_time_90=mean(wait_time_90)) |>
+      select(Y_Q, wait_time_50, wait_time_90) |>
+      gather(key = "variable", value = "value", -Y_Q)
+      plot <- ggplot(subdata) + aes(x = Y_Q, y = value, color = variable) +
+      geom_point(size = 2) +
+      geom_line(
+        aes(group = variable), size = 1) +
+        labs(x = "Year & Quarter", y = "Wait Time (weeks)", color = "", title = "50th and 90th Percentile Waiting Times") + 
+        theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1), text = element_text(size=10), plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
+    ggplotly(plot)}
+)
+
+
+# Side by side tick plots for procedures
+app |> add_callback(
+    output('50perc_procedure', 'figure'),
+    list(input('region-select', 'value')),
+    function(region) {
+        sub_data <- main_t2 |> filter(health_authority %in% region)
+        top<-sub_data |>
+        group_by(procedure) |>
+        summarise(wait_time_50 = mean(wait_time_50)) |>
+        arrange(desc(wait_time_50)) |>
+        top_n(20) |>
+        select(procedure)
+    subdata_top <- filter(sub_data, procedure %in% top$procedure) |>
+        group_by(procedure, year) |>
+        summarise(wait_time_50 = mean(wait_time_50))
+    plot <- ggplot(subdata_top) +
+        aes(x = wait_time_50, y = reorder(procedure, wait_time_50), color = year) +
+        geom_point(size = 3, shape = '|') + # doesn't have to be this shape
+        geom_point(stat = 'summary', fun = mean, color='black', size = 4) +
+        theme(legend.position = "none") +
+        labs(y = "Procedure", x = "Wait Time (weeks)", title = "Waiting Times for 50 percent of Cases by Procedure") +
+        theme(text = element_text(size=10), axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, , face = "bold", hjust = 0.5)) +
+        guides(colour = guide_colourbar(order=1))
+     ggplotly(plot, width = 800, height = 500)
+    }
+)
+
+app |> add_callback(
+    output('90perc_procedure', 'figure'),
+    list(input('region-select', 'value')),
+    function(region) {
+        sub_data <- main_t2 |> filter(health_authority %in% region)
+        top<-sub_data |>
+        group_by(procedure) |>
+        summarise(wait_time_90 = mean(wait_time_90)) |>
+        arrange(desc(wait_time_90)) |>
+        top_n(20) |>
+        select(procedure)
+    subdata_top <- filter(sub_data, procedure %in% top$procedure) |>
+        group_by(procedure, year) |>
+        summarise(wait_time_90 = mean(wait_time_90))
+    plot <- ggplot(subdata_top) +
+        aes(x = wait_time_90, y = reorder(procedure, wait_time_90), color = year) +
+        geom_point(size = 3, shape = '|') + # doesn't have to be this shape
+        geom_point(stat = 'summary', fun = mean, color='black', size = 4) +
+        theme(legend.position = "right") +
+        labs(y = "Procedure", x = "Wait Time (weeks)", title = "Waiting Times for 90 percent of Cases by Procedure") +
+        theme(text = element_text(size=10), axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, face = "bold", hjust = 0.5))
+    ggplotly(plot, width = 800, height = 500)
+    }
+)
+
+
+# Side by side tick plots for hospitals
+app |> add_callback(
+    output('50perc_hospital', 'figure'),
+    list(input('region-select', 'value')),
+    function(region) {
+        sub_data <- main_t2 |> filter(health_authority %in% region)
+        top<-sub_data |>
+        group_by(hospital) |>
+        summarise(wait_time_50 = mean(wait_time_50)) |>
+        arrange(desc(wait_time_50)) |>
+        top_n(20) |>
+        select(hospital)
+    subdata_top <- filter(sub_data, hospital %in% top$hospital) |>
+        group_by(hospital, year) |>
+        summarise(wait_time_50 = mean(wait_time_50))
+    plot <- ggplot(subdata_top) +
+        aes(x = wait_time_50, y = reorder(hospital, wait_time_50), color = year) +
+        geom_point(size = 3, shape = '|') + # doesn't have to be this shape
+        geom_point(stat = 'summary', fun = mean, color='black', size = 4) +
+        theme(legend.position = "none") +
+        labs(y = "Hospital", x = "Wait Time (weeks)", title = "Waiting Times for 50 percent of Cases by Hospitals") +
+        theme(text = element_text(size=10), axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, face = "bold", hjust = 0.5))
+    ggplotly(plot, width = 800, height = 500)
+    }
+)
+
+app |> add_callback(
+    output('90perc_hospital', 'figure'),
+    list(input('region-select', 'value')),
+    function(region) {
+        sub_data <- main_t2 |> filter(health_authority %in% region)
+        top<-sub_data |>
+        group_by(hospital) |>
+        summarise(wait_time_90 = mean(wait_time_90)) |>
+        arrange(desc(wait_time_90)) |>
+        top_n(20) |>
+        select(hospital)
+    subdata_top <- filter(sub_data, hospital %in% top$hospital) |>
+        group_by(hospital, year) |>
+        summarise(wait_time_90 = mean(wait_time_90))
+    plot <- ggplot(subdata_top) +
+        aes(x = wait_time_90, y = reorder(hospital, wait_time_90), color = year) +
+        geom_point(size = 3, shape = '|') + # doesn't have to be this shape
+        geom_point(stat = 'summary', fun = mean, color='black', size = 4) +
+        theme(legend.position = "right") +
+        labs(y = "Hospital", x = "Wait Time (weeks)", title = "Waiting Times for 90 percent of Cases by Hospitals") +
+        theme(text = element_text(size=10), axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, face = "bold", hjust = 0.5))
+    ggplotly(plot, width = 800, height = 500)
     }
 )
 
