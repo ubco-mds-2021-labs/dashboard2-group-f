@@ -301,7 +301,6 @@ app |> add_callback(
       geom_line(
         aes(group = variable), size = 1) +
         labs(x = "Year & Quarter", y = "Wait Time (weeks)", color = "", title = "50th and 90th Percentile Waiting Times") + 
-        #ggtitle("50th and 90th Percentile Waiting Times") +
         theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), text = element_text(size=10), plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
     ggplotly(plot)}
 )
