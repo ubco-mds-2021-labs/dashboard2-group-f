@@ -19,7 +19,7 @@ tab0 <- div(
          'Data for the average wait times for completed surgical cases is presented in the second tab to the left.  This data represent the time, in weeks, patients had to wait before their surgery was completed.  For all the surgeries completed within each quarter, the time 50% of patients had to wait is represented by the 50th percentile data and the number of weeks 90% of patients had to wait is represented by the 90th percentile data.  This tab is important for understanding how long patients have to wait before they can get surgery.'
          ),
      h4(
-         'Individual health authoritise can be selected from the dropdown menu.'
+         'Individual health authorities can be selected from the dropdown menu.'
      )
 
 )
