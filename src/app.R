@@ -301,7 +301,7 @@ app |> add_callback(
       geom_line(
         aes(group = variable), size = 1) +
         labs(x = "Year & Quarter", y = "Wait Time (weeks)", color = "", title = "50th and 90th Percentile Waiting Times") + 
-        theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), text = element_text(size=10), plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
+        theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1), text = element_text(size=10), plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
     ggplotly(plot)}
 )
 
@@ -327,12 +327,9 @@ app |> add_callback(
         geom_point(stat = 'summary', fun = mean, color='red', size = 4) +
         theme(legend.position = "right") +
         labs(y = "Procedure", x = "Wait Time (weeks)", title = "Waiting Times for 50 percent of Cases by Procedure") +
-        theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, , face = "bold", hjust = 0.5))
-        # + scale_color_manual(breaks = c(2010, 2012, 2014, 2016, 2018, 2020, 2022))
-    ggplotly(plot, width = 800, height = 500)
-#         scale_x_continuous(labels = scales::label_dollar(), 
-#                            breaks = scales::pretty_breaks(n = 10)) +
-#         scale_fill_continuous(labels = scales::label_number_si())
+        theme(text = element_text(size=10), axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, , face = "bold", hjust = 0.5)) +
+        guides(colour = guide_colourbar(order=1))
+     ggplotly(plot, width = 800, height = 500)
     }
 )
 
@@ -356,7 +353,7 @@ app |> add_callback(
         geom_point(stat = 'summary', fun = mean, color='red', size = 4) +
         theme(legend.position = "right") +
         labs(y = "Procedure", x = "Wait Time (weeks)", title = "Waiting Times for 90 percent of Cases by Procedure") +
-        theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, face = "bold", hjust = 0.5))
+        theme(text = element_text(size=10), axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, face = "bold", hjust = 0.5))
     ggplotly(plot, width = 800, height = 500)
     }
 )
@@ -383,7 +380,7 @@ app |> add_callback(
         geom_point(stat = 'summary', fun = mean, color='red', size = 4) +
         theme(legend.position = "right") +
         labs(y = "Hospital", x = "Wait Time (weeks)", title = "Waiting Times for 50 percent of Cases by Hospitals") +
-        theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, face = "bold", hjust = 0.5))
+        theme(text = element_text(size=10), axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, face = "bold", hjust = 0.5))
     ggplotly(plot, width = 800, height = 500)
     }
 )
@@ -408,7 +405,7 @@ app |> add_callback(
         geom_point(stat = 'summary', fun = mean, color='red', size = 4) +
         theme(legend.position = "right") +
         labs(y = "Hospital", x = "Wait Time (weeks)", title = "Waiting Times for 90 percent of Cases by Hospitals") +
-        theme(text = element_text(size=10), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, face = "bold", hjust = 0.5))
+        theme(text = element_text(size=10), axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1), plot.title = element_text(size = 10, face = "bold", hjust = 0.5))
     ggplotly(plot, width = 800, height = 500)
     }
 )

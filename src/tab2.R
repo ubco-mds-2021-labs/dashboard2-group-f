@@ -4,6 +4,8 @@ main_t2 <- na.omit(df)
 main_t2 <- main_t2 |> filter(procedure != 'All Procedures', 
                          hospital != 'All Facilities',
                          health_authority != 'All Health Authorities')
+main_t2$year <- as.factor(main_t2$year)
+
 # tab1 layout
 tab2 <- list(
     dbcRow(
