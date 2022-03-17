@@ -4,9 +4,9 @@
 
 #### Deployed dash app links:
 
-* Anqi: [![](http://heroku-badge.herokuapp.com/?app=angularjs-crypto&style=flat&svg=1)](https://anqilidashtest2.herokuapp.com/)
-* Andrew: [![](http://heroku-badge.herokuapp.com/?app=angularjs-crypto&style=flat&svg=1)](https://bc-surgical-wait-times-andrew.herokuapp.com/)
-* Monica: [![](http://heroku-badge.herokuapp.com/?app=angularjs-crypto&style=flat&svg=1)](https://data551groupfmonica.herokuapp.com)
+* Anqi:  
+* Andrew:  
+* Monica:  
 * Kevin: [![](http://heroku-badge.herokuapp.com/?app=angularjs-crypto&style=flat&svg=1)](https://bc-surgical-wait-times-r.herokuapp.com/)
 
 ## Welcome to our project!
